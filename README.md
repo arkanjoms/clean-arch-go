@@ -3,7 +3,7 @@
 Projeto com exercícios do curso de código limpo e arquitetura limpa turma 2 ministrada pelo [Rodrigo Branas](https://app.branas.io/).
 
 ## validate.go
-Este arquivo foi criado bom base no exemplo em javascript apresentado em aula:
+Este arquivo foi criado bom base no exemplo em javascript apresentado em [aula](https://github.com/rodrigobranas/cpf):
 
 ```javascript
 function validate(str) {
