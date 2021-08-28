@@ -1,2 +1,4 @@
 .idea/
 *.iml
+coverage.out
+**/mock/*_mock.go
