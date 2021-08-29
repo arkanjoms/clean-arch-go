@@ -19,7 +19,7 @@ var (
 
 const (
 	testDbHost          = "localhost"
-	testDbName          = "golauth_test"
+	testDbName          = "testdb"
 	testDbUser          = "test"
 	testDbPassword      = "test"
 	testPostgresSvcPort = "5432"
