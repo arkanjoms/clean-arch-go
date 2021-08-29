@@ -1,11 +1,12 @@
-package application
+package itest
 
 import (
+	"clean-arch-go/application"
 	"clean-arch-go/domain/service"
-	infraDB "clean-arch-go/infra/database"
-	"clean-arch-go/infra/factory"
+	infraDatabase "clean-arch-go/infra/database"
+	infraFactory "clean-arch-go/infra/factory"
 	gatewayMemory "clean-arch-go/infra/gateway/memory"
-	"clean-arch-go/ops/test"
+	"clean-arch-go/test"
 	"database/sql"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -21,11 +22,11 @@ type PlaceOrderSuite struct {
 	*require.Assertions
 	ctrl *gomock.Controller
 	db   *sql.DB
-	uc   PlaceOrder
+	uc   application.PlaceOrder
 }
 
 func TestNewPlaceOrder(t *testing.T) {
-	ctx, err := test.ContainerDBStart("./..")
+	ctx, err := test.ContainerDBStart("./../..")
 	assert.NoError(t, err)
 	suite.Run(t, new(PlaceOrderSuite))
 	test.ContainerDBStop(ctx)
@@ -36,11 +37,11 @@ func (s *PlaceOrderSuite) SetupTest() {
 	s.ctrl = gomock.NewController(s.T())
 	zipcodeClient := gatewayMemory.NewZipcodeClient()
 	freightCalculator := service.NewFreightCalculator()
-	database := infraDB.PGDatabase{}
+	database := infraDatabase.PGDatabase{}
 	pgDB := database.GetTestInstance()
-	repositoryFactory := factory.NewDatabaseRepositoryFactory(pgDB)
+	repositoryFactory := infraFactory.NewDatabaseRepositoryFactory(pgDB)
 	s.db = pgDB.GetDB()
-	s.uc = NewPlaceOrder(zipcodeClient, freightCalculator, repositoryFactory)
+	s.uc = application.NewPlaceOrder(zipcodeClient, freightCalculator, repositoryFactory)
 }
 
 func (s PlaceOrderSuite) TearDownTest() {
@@ -48,14 +49,14 @@ func (s PlaceOrderSuite) TearDownTest() {
 }
 
 func (s PlaceOrderSuite) TestUseCoupon_Valid_20Percent() {
-	err := test.DatasetTest(s.db, "./..", "clean.sql", "place_order/data.sql")
+	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
-	input := PlaceOrderInput{
+	input := application.PlaceOrderInput{
 		Document: "05272720784",
-		Items: []PlaceOrderItemInput{
-			{itemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), quantity: 2},
-			{itemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), quantity: 1},
-			{itemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), quantity: 3},
+		Items: []application.PlaceOrderItemInput{
+			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
+			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
+			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
 		},
 		CouponCode:     "VALE20",
 		ZipcodeOrigin:  "A",
@@ -70,14 +71,14 @@ func (s PlaceOrderSuite) TestUseCoupon_Valid_20Percent() {
 }
 
 func (s PlaceOrderSuite) TestUseCoupon_InvalidCoupon() {
-	err := test.DatasetTest(s.db, "./..", "clean.sql", "place_order/data.sql")
+	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
-	input := PlaceOrderInput{
+	input := application.PlaceOrderInput{
 		Document: "05272720784",
-		Items: []PlaceOrderItemInput{
-			{itemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), quantity: 2},
-			{itemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), quantity: 1},
-			{itemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), quantity: 3},
+		Items: []application.PlaceOrderItemInput{
+			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
+			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
+			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
 		},
 		CouponCode:     "AMAZING_COUPON",
 		ZipcodeOrigin:  "A",
@@ -92,14 +93,14 @@ func (s PlaceOrderSuite) TestUseCoupon_InvalidCoupon() {
 }
 
 func (s PlaceOrderSuite) TestUseCoupon_ExpiredCoupon() {
-	err := test.DatasetTest(s.db, "./..", "clean.sql", "place_order/data.sql")
+	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
-	input := PlaceOrderInput{
+	input := application.PlaceOrderInput{
 		Document: "05272720784",
-		Items: []PlaceOrderItemInput{
-			{itemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), quantity: 2},
-			{itemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), quantity: 1},
-			{itemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), quantity: 3},
+		Items: []application.PlaceOrderItemInput{
+			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
+			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
+			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
 		},
 		CouponCode:     "VALE20_EXPIRED",
 		ZipcodeOrigin:  "A",
@@ -114,16 +115,16 @@ func (s PlaceOrderSuite) TestUseCoupon_ExpiredCoupon() {
 }
 
 func (s PlaceOrderSuite) TestUseCoupon_CalcOrderCode() {
-	err := test.DatasetTest(s.db, "./..", "clean.sql", "place_order/data.sql")
+	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
 	location, _ := time.LoadLocation("America/Sao_Paulo")
-	input := PlaceOrderInput{
+	input := application.PlaceOrderInput{
 		Document:  "05272720784",
 		IssueDate: time.Date(2021, time.Month(8), 20, 0, 0, 0, 0, location),
-		Items: []PlaceOrderItemInput{
-			{itemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), quantity: 2},
-			{itemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), quantity: 1},
-			{itemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), quantity: 3},
+		Items: []application.PlaceOrderItemInput{
+			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
+			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
+			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
 		},
 		CouponCode:     "AMAZING_COUPON",
 		ZipcodeOrigin:  "A",

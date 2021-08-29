@@ -1,4 +1,4 @@
 .idea/
 *.iml
-coverage.out
+coverage*
 **/mock/*_mock.go

@@ -38,15 +38,15 @@ func (uc PlaceOrder) Execute(input PlaceOrderInput) (PlaceOrderOutput, error) {
 	}
 	distance := uc.zipcodeClient.Distance(input.ZipcodeOrigin, input.ZipcodeDestiny)
 	for _, itemInput := range input.Items {
-		item, err := uc.itemRepository.GetById(itemInput.itemID)
+		item, err := uc.itemRepository.GetById(itemInput.ItemID)
 		if err != nil {
 			return PlaceOrderOutput{}, err
 		}
 		if (item == entity.Item{}) {
 			return PlaceOrderOutput{}, ErrItemNotFound
 		}
-		order.AddItem(itemInput.itemID, item.Price, itemInput.quantity)
-		order.ShippingCost += uc.freightCalculator.Calculator(distance, item) * itemInput.quantity
+		order.AddItem(itemInput.ItemID, item.Price, itemInput.Quantity)
+		order.ShippingCost += uc.freightCalculator.Calculator(distance, item) * itemInput.Quantity
 	}
 	if input.CouponCode != "" {
 		coupon, err := uc.couponRepository.FindByCode(input.CouponCode)

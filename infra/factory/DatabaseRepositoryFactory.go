@@ -3,26 +3,26 @@ package factory
 import (
 	"clean-arch-go/domain/factory"
 	"clean-arch-go/domain/repository"
-	pgDatabase "clean-arch-go/infra/database"
-	"clean-arch-go/infra/repository/database"
+	infraDatabase "clean-arch-go/infra/database"
+	repoDatabase "clean-arch-go/infra/repository/database"
 )
 
 type DatabaseRepositoryFactory struct {
-	db *pgDatabase.PGDatabase
+	pgDB *infraDatabase.PGDatabase
 }
 
-func NewDatabaseRepositoryFactory(db *pgDatabase.PGDatabase) factory.RepositoryFactory {
-	return DatabaseRepositoryFactory{db: db}
+func NewDatabaseRepositoryFactory(pgDB *infraDatabase.PGDatabase) factory.RepositoryFactory {
+	return DatabaseRepositoryFactory{pgDB: pgDB}
 }
 
 func (f DatabaseRepositoryFactory) NewItemRepository() repository.ItemRepository {
-	return database.NewItemRepositoryDatabase(f.db.GetInstance())
+	return repoDatabase.NewItemRepositoryDatabase(f.pgDB)
 }
 
 func (f DatabaseRepositoryFactory) NewCouponRepository() repository.CouponRepository {
-	return database.NewCouponRepositoryDatabase(f.db.GetInstance())
+	return repoDatabase.NewCouponRepositoryDatabase(f.pgDB)
 }
 
 func (f DatabaseRepositoryFactory) NewOrderRepository() repository.OrderRepository {
-	return database.NewOrderRepositoryDatabase(f.db.GetInstance())
+	return repoDatabase.NewOrderRepositoryDatabase(f.pgDB)
 }

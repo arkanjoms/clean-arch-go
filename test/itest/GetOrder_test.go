@@ -1,9 +1,10 @@
-package application
+package itest
 
 import (
-	infraDB "clean-arch-go/infra/database"
-	"clean-arch-go/infra/factory"
-	"clean-arch-go/ops/test"
+	"clean-arch-go/application"
+	infraDatabase "clean-arch-go/infra/database"
+	infraFactory "clean-arch-go/infra/factory"
+	"clean-arch-go/test"
 	"database/sql"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -17,11 +18,11 @@ type GetOrderSuite struct {
 	*require.Assertions
 	ctrl *gomock.Controller
 	db   *sql.DB
-	uc   *GetOrder
+	uc   *application.GetOrder
 }
 
 func TestGetOrder(t *testing.T) {
-	ctx, err := test.ContainerDBStart("./..")
+	ctx, err := test.ContainerDBStart("./../..")
 	assert.NoError(t, err)
 	suite.Run(t, new(GetOrderSuite))
 	test.ContainerDBStop(ctx)
@@ -30,11 +31,11 @@ func TestGetOrder(t *testing.T) {
 func (s *GetOrderSuite) SetupTest() {
 	s.Assertions = require.New(s.T())
 	s.ctrl = gomock.NewController(s.T())
-	database := infraDB.PGDatabase{}
+	database := infraDatabase.PGDatabase{}
 	pgDB := database.GetTestInstance()
-	repoFactory := factory.NewDatabaseRepositoryFactory(pgDB)
+	repoFactory := infraFactory.NewDatabaseRepositoryFactory(pgDB)
 	s.db = pgDB.GetDB()
-	s.uc = NewGetOrder(repoFactory)
+	s.uc = application.NewGetOrder(repoFactory)
 }
 
 func (s GetOrderSuite) TearDownTest() {
@@ -42,7 +43,7 @@ func (s GetOrderSuite) TearDownTest() {
 }
 
 func (s GetOrderSuite) TestExecute() {
-	err := test.DatasetTest(s.db, "./..", "clean.sql", "place_order/data_with_order.sql")
+	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data_with_order.sql")
 	s.NoError(err)
 	output, err := s.uc.Execute("202100000009")
 	s.NoError(err)

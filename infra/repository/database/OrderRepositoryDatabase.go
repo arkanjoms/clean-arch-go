@@ -3,18 +3,19 @@ package database
 import (
 	"clean-arch-go/domain/entity"
 	"clean-arch-go/domain/repository"
-	infraDB "clean-arch-go/infra/database"
+	infraDatabase "clean-arch-go/infra/database"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 )
 
 type OrderRepositoryDatabase struct {
-	db infraDB.Database
+	db infraDatabase.Database
 }
 
-func NewOrderRepositoryDatabase(db infraDB.Database) repository.OrderRepository {
+func NewOrderRepositoryDatabase(db infraDatabase.Database) repository.OrderRepository {
 	return OrderRepositoryDatabase{db: db}
 }
 
@@ -41,8 +42,11 @@ func (r OrderRepositoryDatabase) Get(code string) (*entity.Order, error) {
 	var orderCode string
 	err := r.db.One(context.Background(), "select id, coupon_code, code, cpf, issue_date, shipping_cost, serial from ccca.order where code = $1", code).
 		Scan(&order.ID, &couponCode, &orderCode, &document, &order.IssueDate, &order.ShippingCost, &order.Sequence)
-	if err != nil {
+	if err != nil && !errors.Is(err, infraDatabase.ErrNoRows) {
 		return nil, fmt.Errorf("could not scan order: %w", err)
+	}
+	if errors.Is(err, infraDatabase.ErrNoRows) {
+		return nil, nil
 	}
 	order.Code = entity.OrderCode{Value: orderCode}
 	if couponCode.Valid {

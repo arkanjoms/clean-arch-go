@@ -7,4 +7,6 @@ import (
 
 type ItemRepository interface {
 	GetById(id uuid.UUID) (entity.Item, error)
+	FindAll() ([]entity.Item, error)
+	FindAllByCategory(category string) ([]entity.Item, error)
 }

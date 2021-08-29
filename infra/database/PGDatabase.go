@@ -12,19 +12,20 @@ import (
 	"os"
 )
 
+var instance *PGDatabase
+
 type PGDatabase struct {
-	instance *PGDatabase
-	db       *sql.DB
+	db *sql.DB
 }
 
 func (d *PGDatabase) GetInstance() *PGDatabase {
-	if d.instance == nil {
-		d.instance = d.createInstance()
+	if instance == nil {
+		instance = d.createInstance()
 	}
-	return d.instance
+	return instance
 }
 
-func (d *PGDatabase) GetTestInstance() *PGDatabase {
+func (d PGDatabase) GetTestInstance() *PGDatabase {
 	return d.createInstance()
 }
 
@@ -70,11 +71,11 @@ func (d PGDatabase) createStringConn() string {
 func (d PGDatabase) getConnection(connStr string) (*sql.DB, error) {
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		return nil, fmt.Errorf("could not open connection: %w", err)
+		return nil, fmt.Errorf("database: could not open connection: %w", err)
 	}
 	err = db.Ping()
 	if err != nil {
-		return nil, fmt.Errorf("could not establish connection: %w", err)
+		return nil, fmt.Errorf("database: could not establish connection: %w", err)
 	}
 	return db, nil
 }
@@ -84,7 +85,7 @@ func (d PGDatabase) migrate() error {
 	logrus.Info("starting migration execution")
 	driver, err := postgres.WithInstance(d.db, &postgres.Config{})
 	if err != nil {
-		return fmt.Errorf("could not create migration connection: %w", err)
+		return fmt.Errorf("database: could not create migration connection: %w", err)
 	}
 	logrus.Infof("Executing migrations on path: %s", sourceUrl)
 	m, err := migrate.NewWithDatabaseInstance(
@@ -95,7 +96,7 @@ func (d PGDatabase) migrate() error {
 	if m != nil {
 		err = m.Up()
 		if err != nil && err.Error() != "no change" {
-			return fmt.Errorf("error when executing database migration: %w", err)
+			return fmt.Errorf("database: error when executing database migration: %w", err)
 		}
 	}
 	logrus.Info("finalizing migrations!")

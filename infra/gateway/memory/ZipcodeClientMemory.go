@@ -2,7 +2,7 @@ package memory
 
 import (
 	"clean-arch-go/domain/gateway"
-	"fmt"
+	"github.com/sirupsen/logrus"
 )
 
 type ZipcodeClientMemory struct{}
@@ -12,6 +12,6 @@ func NewZipcodeClient() gateway.ZipcodeClient {
 }
 
 func (z ZipcodeClientMemory) Distance(origin string, destiny string) float64 {
-	fmt.Printf("Distance from %s to %s\n", origin, destiny)
+	logrus.Warnf("Distance from %s to %s", origin, destiny)
 	return 1000
 }

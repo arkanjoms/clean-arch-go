@@ -2,8 +2,8 @@ package database
 
 import (
 	"clean-arch-go/domain/repository"
-	infraDB "clean-arch-go/infra/database"
-	"clean-arch-go/ops/test"
+	infraDatabase "clean-arch-go/infra/database"
+	"clean-arch-go/test"
 	"database/sql"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -31,7 +31,7 @@ func TestItemRepositoryDatabase(t *testing.T) {
 func (s *ItemRepositoryDatabaseSuite) SetupTest() {
 	s.Assertions = require.New(s.T())
 	s.ctrl = gomock.NewController(s.T())
-	database := infraDB.PGDatabase{}
+	database := infraDatabase.PGDatabase{}
 	pgDB := database.GetTestInstance()
 	s.repo = NewItemRepositoryDatabase(pgDB)
 	s.db = pgDB.GetDB()
@@ -44,10 +44,11 @@ func (s ItemRepositoryDatabaseSuite) TearDownTest() {
 func (s ItemRepositoryDatabaseSuite) TestGetById_ok() {
 	err := test.DatasetTest(s.db, "./../../..", "clean.sql", "item_repository/data.sql")
 	s.NoError(err)
-	id := uuid.MustParse("c2e06611-8d13-4d2e-8406-ff878ae61ded")
+	id := uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2")
 	item, err := s.repo.GetById(id)
 	s.NoError(err)
 	s.NotEmpty(item)
 	s.Equal(item.ID, id)
-	s.Equal(item.Description, "Palheta")
+	s.Equal("Cabo", item.Description)
+	s.Equal("Acessórios", item.Category)
 }

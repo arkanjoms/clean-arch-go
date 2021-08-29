@@ -2,8 +2,8 @@ package database
 
 import (
 	"clean-arch-go/domain/repository"
-	infraDB "clean-arch-go/infra/database"
-	"clean-arch-go/ops/test"
+	infraDatabase "clean-arch-go/infra/database"
+	"clean-arch-go/test"
 	"database/sql"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +30,7 @@ func TestCouponRepositoryDatabase(t *testing.T) {
 func (s *CouponRepositoryDatabaseSuite) SetupTest() {
 	s.Assertions = require.New(s.T())
 	s.ctrl = gomock.NewController(s.T())
-	database := infraDB.PGDatabase{}
+	database := infraDatabase.PGDatabase{}
 	pgDB := database.GetTestInstance()
 	s.repo = NewCouponRepositoryDatabase(pgDB)
 	s.db = pgDB.GetDB()
