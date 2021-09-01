@@ -1,0 +1,11 @@
+runtime: go116
+instance_class: F1
+
+env_variables:
+  MIGRATION_SOURCE_URL: "./migrations"
+  DB_HOST: ${DB_HOST}
+  DB_PORT: ${DB_PORT}
+  DB_NAME: ${DB_NAME}
+  DB_USERNAME: ${DB_USERNAME}
+  DB_PASSWORD: ${DB_PASSWORD}
+  LOG_LEVEL: ${LOG_LEVEL}

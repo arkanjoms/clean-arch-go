@@ -10,10 +10,9 @@ jobs:
     name: Deploy to google cloud app engine
     runs-on: ubuntu-20.04
     steps:
-      - name: Create app.yaml file
+      - name: Create app.yaml file with envs
         run: |
-          echo "${APP_YAML_CONTENT}" >> app.yaml
-          cat app.yaml
+          envsubst < ./app.yaml.tplt > app.yaml
       - id: deploy
         uses: google-github-actions/deploy-appengine@main
         with:
