@@ -22,7 +22,6 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
         run: |
-          echo $DB_HOST
           envsubst < ./app.yaml.tplt > app.yaml
 
       - id: deploy
