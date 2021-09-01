@@ -1,10 +1,10 @@
-package application
+package placeorder
 
 import "time"
 
-type PlaceOrderInput struct {
+type InputPlaceOrder struct {
 	Document       string
-	Items          []PlaceOrderItemInput
+	Items          []InputPlaceOrderItem
 	CouponCode     string
 	ZipcodeOrigin  string
 	ZipcodeDestiny string

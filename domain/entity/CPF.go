@@ -8,6 +8,13 @@ import (
 	"strings"
 )
 
+const (
+	factorDigit1 = 10
+	factorDigit2 = 11
+	maxDigits1   = 9
+	maxDigits2   = 10
+)
+
 type CPF struct {
 	value string
 	valid bool

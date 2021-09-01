@@ -18,18 +18,18 @@ type PGDatabase struct {
 	db *sql.DB
 }
 
-func (d *PGDatabase) GetInstance() *PGDatabase {
+func GetInstance() *PGDatabase {
 	if instance == nil {
-		instance = d.createInstance()
+		instance = createInstance()
 	}
 	return instance
 }
 
-func (d PGDatabase) GetTestInstance() *PGDatabase {
-	return d.createInstance()
+func NewInstance() *PGDatabase {
+	return createInstance()
 }
 
-func (d *PGDatabase) createInstance() *PGDatabase {
+func createInstance() *PGDatabase {
 	var err error
 	database := &PGDatabase{}
 	connStr := database.createStringConn()

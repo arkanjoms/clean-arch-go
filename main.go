@@ -11,8 +11,8 @@ import (
 
 func main() {
 	logrus.SetLevel(logrus.DebugLevel)
-	pgDB := database.PGDatabase{}
-	repositoryFactory := factory.NewDatabaseRepositoryFactory(pgDB.GetInstance())
+	db := database.GetInstance()
+	repositoryFactory := factory.NewDatabaseRepositoryFactory(db)
 	zipcodeClient := memory.NewZipcodeClient()
 	freightCalculator := service.NewFreightCalculator()
 	server := http.NewGorillaMux()

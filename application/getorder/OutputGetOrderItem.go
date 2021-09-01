@@ -1,6 +1,6 @@
-package application
+package getorder
 
-type GetOrderItemOutput struct {
+type OutputGetOrderItem struct {
 	Description string
 	Price       float64
 	Quantity    float64

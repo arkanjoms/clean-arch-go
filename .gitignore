@@ -2,3 +2,4 @@
 *.iml
 coverage*
 **/mock/*_mock.go
+app.yaml

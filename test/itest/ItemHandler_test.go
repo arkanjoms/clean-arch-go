@@ -1,13 +1,13 @@
 package itest
 
 import (
-	"clean-arch-go/application"
+	"clean-arch-go/application/getitem"
 	"clean-arch-go/domain/factory"
 	"clean-arch-go/domain/gateway"
 	"clean-arch-go/domain/service"
-	infraDatabase "clean-arch-go/infra/database"
+	"clean-arch-go/infra/database"
 	infraFactory "clean-arch-go/infra/factory"
-	infraGateway "clean-arch-go/infra/gateway/memory"
+	"clean-arch-go/infra/gateway/memory"
 	infraHttp "clean-arch-go/infra/http"
 	"clean-arch-go/test"
 	"database/sql"
@@ -41,11 +41,10 @@ func TestItemHandler(t *testing.T) {
 func (s *ItemHandlerSuite) SetupTest() {
 	s.Assertions = require.New(s.T())
 	s.ctrl = gomock.NewController(s.T())
-	database := infraDatabase.PGDatabase{}
-	pgDB := database.GetTestInstance()
-	s.db = pgDB.GetDB()
+	s.db = database.NewInstance().GetDB()
+	pgDB := database.NewInstance()
 	s.repositoryFactory = infraFactory.NewDatabaseRepositoryFactory(pgDB)
-	s.zipcodeClient = infraGateway.NewZipcodeClient()
+	s.zipcodeClient = memory.NewZipcodeClient()
 	s.freightCalculator = service.NewFreightCalculator()
 	s.server = infraHttp.NewGorillaMux()
 	infraHttp.NewRouteConfig(s.server, s.repositoryFactory, s.zipcodeClient, s.freightCalculator).Build()
@@ -61,7 +60,7 @@ func (s ItemHandlerSuite) TestGetItems_noFilter() {
 	req, _ := http.NewRequest("GET", "/api/items", nil)
 	response := test.ExecuteRequest(req, s.server.(infraHttp.GorillaMux).Router)
 	s.Equal(http.StatusOK, response.Code)
-	var items []application.GetItemOutput
+	var items []getitem.OutputGetItem
 	err = json.Unmarshal(response.Body.Bytes(), &items)
 	s.NoError(err)
 	s.Len(items, 3)
@@ -81,7 +80,7 @@ func (s ItemHandlerSuite) TestGetItems_categoryFilter_found() {
 	req, _ := http.NewRequest("GET", "/api/items?category=Acessórios", nil)
 	response := test.ExecuteRequest(req, s.server.(infraHttp.GorillaMux).Router)
 	s.Equal(http.StatusOK, response.Code)
-	var items []application.GetItemOutput
+	var items []getitem.OutputGetItem
 	err = json.Unmarshal(response.Body.Bytes(), &items)
 	s.NoError(err)
 	s.Len(items, 1)

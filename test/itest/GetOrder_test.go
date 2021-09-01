@@ -1,9 +1,9 @@
 package itest
 
 import (
-	"clean-arch-go/application"
-	infraDatabase "clean-arch-go/infra/database"
-	infraFactory "clean-arch-go/infra/factory"
+	"clean-arch-go/application/getorder"
+	"clean-arch-go/infra/database"
+	"clean-arch-go/infra/factory"
 	"clean-arch-go/test"
 	"database/sql"
 	"github.com/golang/mock/gomock"
@@ -18,7 +18,7 @@ type GetOrderSuite struct {
 	*require.Assertions
 	ctrl *gomock.Controller
 	db   *sql.DB
-	uc   *application.GetOrder
+	uc   *getorder.GetOrder
 }
 
 func TestGetOrder(t *testing.T) {
@@ -31,11 +31,10 @@ func TestGetOrder(t *testing.T) {
 func (s *GetOrderSuite) SetupTest() {
 	s.Assertions = require.New(s.T())
 	s.ctrl = gomock.NewController(s.T())
-	database := infraDatabase.PGDatabase{}
-	pgDB := database.GetTestInstance()
-	repoFactory := infraFactory.NewDatabaseRepositoryFactory(pgDB)
-	s.db = pgDB.GetDB()
-	s.uc = application.NewGetOrder(repoFactory)
+	pgDB := database.NewInstance()
+	repoFactory := factory.NewDatabaseRepositoryFactory(pgDB)
+	s.db = database.NewInstance().GetDB()
+	s.uc = getorder.NewGetOrder(repoFactory)
 }
 
 func (s GetOrderSuite) TearDownTest() {

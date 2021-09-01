@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"clean-arch-go/application"
+	"clean-arch-go/application/getorder"
 	"clean-arch-go/domain/factory"
 	"io"
 )
@@ -15,6 +15,6 @@ func NewOrderHandler(repositoryFactory factory.RepositoryFactory) OrderHandler {
 }
 
 func (h OrderHandler) GetOrder(params map[string]string, _ map[string][]string, _ io.ReadCloser) (interface{}, error) {
-	getOrder := application.NewGetOrder(h.repositoryFactory)
+	getOrder := getorder.NewGetOrder(h.repositoryFactory)
 	return getOrder.Execute(params["code"])
 }

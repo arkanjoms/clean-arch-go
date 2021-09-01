@@ -1,4 +1,4 @@
-package application
+package getitem
 
 import (
 	"clean-arch-go/domain/entity"
@@ -14,14 +14,14 @@ func NewGetItem(repositoryFactory factory.RepositoryFactory) GetItem {
 	return GetItem{itemRepository: repositoryFactory.NewItemRepository()}
 }
 
-func (i GetItem) Execute(category string) ([]GetItemOutput, error) {
+func (i GetItem) Execute(category string) ([]OutputGetItem, error) {
 	items, err := i.findItems(category)
 	if err != nil {
 		return nil, err
 	}
-	var itemsOutput []GetItemOutput
+	var itemsOutput []OutputGetItem
 	for _, item := range items {
-		itemsOutput = append(itemsOutput, GetItemOutput{
+		itemsOutput = append(itemsOutput, OutputGetItem{
 			ID:          item.ID,
 			Category:    item.Category,
 			Description: item.Description,

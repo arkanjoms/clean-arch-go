@@ -3,15 +3,15 @@ package factory
 import (
 	"clean-arch-go/domain/factory"
 	"clean-arch-go/domain/repository"
-	infraDatabase "clean-arch-go/infra/database"
+	"clean-arch-go/infra/database"
 	repoDatabase "clean-arch-go/infra/repository/database"
 )
 
 type DatabaseRepositoryFactory struct {
-	pgDB *infraDatabase.PGDatabase
+	pgDB *database.PGDatabase
 }
 
-func NewDatabaseRepositoryFactory(pgDB *infraDatabase.PGDatabase) factory.RepositoryFactory {
+func NewDatabaseRepositoryFactory(pgDB *database.PGDatabase) factory.RepositoryFactory {
 	return DatabaseRepositoryFactory{pgDB: pgDB}
 }
 

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"clean-arch-go/application"
+	"clean-arch-go/application/placeorder"
 	"clean-arch-go/domain/factory"
 	"clean-arch-go/domain/gateway"
 	"clean-arch-go/domain/service"
@@ -24,8 +24,8 @@ func NewPlaceOrderHandler(zipcodeClient gateway.ZipcodeClient, freightCalculator
 }
 
 func (h PlaceOrderHandler) CreateOrder(_ map[string]string, _ map[string][]string, body io.ReadCloser) (interface{}, error) {
-	placeOrder := application.NewPlaceOrder(h.zipcodeClient, h.freightCalculator, h.repositoryFactory)
-	var input application.PlaceOrderInput
+	placeOrder := placeorder.NewPlaceOrder(h.zipcodeClient, h.freightCalculator, h.repositoryFactory)
+	var input placeorder.InputPlaceOrder
 	_ = json.NewDecoder(body).Decode(&input)
 	return placeOrder.Execute(input)
 }

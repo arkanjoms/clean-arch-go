@@ -1,8 +1,8 @@
-package application
+package getitem
 
 import "github.com/google/uuid"
 
-type GetItemOutput struct {
+type OutputGetItem struct {
 	ID          uuid.UUID
 	Category    string
 	Description string

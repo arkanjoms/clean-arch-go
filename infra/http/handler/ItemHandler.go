@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"clean-arch-go/application"
+	"clean-arch-go/application/getitem"
 	"clean-arch-go/domain/factory"
 	"io"
 )
@@ -15,7 +15,7 @@ func NewItemHandler(repositoryFactory factory.RepositoryFactory) ItemHandler {
 }
 
 func (h ItemHandler) GetItems(_ map[string]string, queryParams map[string][]string, _ io.ReadCloser) (interface{}, error) {
-	getItem := application.NewGetItem(h.repositoryFactory)
+	getItem := getitem.NewGetItem(h.repositoryFactory)
 	category := getQueryParamOne(queryParams, "category")
 	return getItem.Execute(category)
 }

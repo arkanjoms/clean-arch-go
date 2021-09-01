@@ -1,8 +1,8 @@
-package application
+package placeorder
 
 import "github.com/google/uuid"
 
-type PlaceOrderItemInput struct {
+type InputPlaceOrderItem struct {
 	ItemID   uuid.UUID
 	Quantity float64
 }

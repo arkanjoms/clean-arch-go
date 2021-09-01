@@ -30,8 +30,7 @@ func TestCouponRepositoryDatabase(t *testing.T) {
 func (s *CouponRepositoryDatabaseSuite) SetupTest() {
 	s.Assertions = require.New(s.T())
 	s.ctrl = gomock.NewController(s.T())
-	database := infraDatabase.PGDatabase{}
-	pgDB := database.GetTestInstance()
+	pgDB := infraDatabase.NewInstance()
 	s.repo = NewCouponRepositoryDatabase(pgDB)
 	s.db = pgDB.GetDB()
 }

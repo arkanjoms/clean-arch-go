@@ -1,4 +1,4 @@
-package application
+package placeorder
 
 import (
 	"clean-arch-go/domain/entity"
@@ -30,20 +30,20 @@ func NewPlaceOrder(zipcodeClient gateway.ZipcodeClient, freightCalculator servic
 	}
 }
 
-func (uc PlaceOrder) Execute(input PlaceOrderInput) (PlaceOrderOutput, error) {
+func (uc PlaceOrder) Execute(input InputPlaceOrder) (OutputPlaceOrder, error) {
 	sequence := uc.orderRepository.Count() + 1
 	order, err := entity.NewOrder(input.Document, input.IssueDate, sequence)
 	if err != nil {
-		return PlaceOrderOutput{}, fmt.Errorf("could not create order: %w", err)
+		return OutputPlaceOrder{}, fmt.Errorf("could not create order: %w", err)
 	}
 	distance := uc.zipcodeClient.Distance(input.ZipcodeOrigin, input.ZipcodeDestiny)
 	for _, itemInput := range input.Items {
 		item, err := uc.itemRepository.GetById(itemInput.ItemID)
 		if err != nil {
-			return PlaceOrderOutput{}, err
+			return OutputPlaceOrder{}, err
 		}
 		if (item == entity.Item{}) {
-			return PlaceOrderOutput{}, ErrItemNotFound
+			return OutputPlaceOrder{}, ErrItemNotFound
 		}
 		order.AddItem(itemInput.ItemID, item.Price, itemInput.Quantity)
 		order.ShippingCost += uc.freightCalculator.Calculator(distance, item) * itemInput.Quantity
@@ -51,14 +51,14 @@ func (uc PlaceOrder) Execute(input PlaceOrderInput) (PlaceOrderOutput, error) {
 	if input.CouponCode != "" {
 		coupon, err := uc.couponRepository.FindByCode(input.CouponCode)
 		if err != nil {
-			return PlaceOrderOutput{}, err
+			return OutputPlaceOrder{}, err
 		}
 		order.AddCoupon(coupon)
 	}
 	total := order.GetTotal()
 	err = uc.orderRepository.Save(order)
 	if err != nil {
-		return PlaceOrderOutput{}, err
+		return OutputPlaceOrder{}, err
 	}
-	return NewPlaceOrderOutput(order.Code.Value, order.ShippingCost, total), nil
+	return OutputPlaceOrder{Code: order.Code.Value, ShippingCost: order.ShippingCost, Total: total}, nil
 }
