@@ -10,9 +10,13 @@ jobs:
     name: Deploy to google cloud app engine
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout
+        uses: actions/checkout@latest
+
       - name: Create app.yaml file with envs
         run: |
           envsubst < ./app.yaml.tplt > app.yaml
+
       - id: deploy
         uses: google-github-actions/deploy-appengine@main
         with:
