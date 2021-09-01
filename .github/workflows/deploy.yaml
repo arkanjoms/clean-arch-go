@@ -15,7 +15,9 @@ jobs:
 
       - name: Create app.yaml file with envs
         run: |
+          printenv
           envsubst < ./app.yaml.tplt > app.yaml
+          cat app.yaml
 
       - id: deploy
         uses: google-github-actions/deploy-appengine@main
