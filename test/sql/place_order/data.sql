@@ -7,6 +7,6 @@ values ('36ed8660-feaa-4add-94c5-441792e8a0c2', 'Acessórios', 'Cabo', 30, 10, 1
 
 -- COUPON
 insert into ccca.coupon (code, percentage, expire_date)
-values ('VALE20', 20.0, '2021-10-10T10:00:00');
+values ('VALE20', 20.0, now() + INTERVAL '1' month);
 insert into ccca.coupon (code, percentage, expire_date)
-values ('VALE20_EXPIRED', 20.0, '2020-10-10T10:00:00');
+values ('VALE20_EXPIRED', 20.0, now() - INTERVAL '1' month);

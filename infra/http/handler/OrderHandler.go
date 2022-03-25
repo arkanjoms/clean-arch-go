@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"clean-arch-go/application/getorder"
+	"clean-arch-go/domain/application/getorder"
 	"clean-arch-go/domain/factory"
 	"io"
 )

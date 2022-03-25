@@ -1,7 +1,7 @@
 package itest
 
 import (
-	"clean-arch-go/application/placeorder"
+	placeorder2 "clean-arch-go/domain/application/placeorder"
 	"clean-arch-go/domain/service"
 	"clean-arch-go/infra/database"
 	"clean-arch-go/infra/factory"
@@ -22,7 +22,7 @@ type PlaceOrderSuite struct {
 	*require.Assertions
 	ctrl *gomock.Controller
 	db   *sql.DB
-	uc   placeorder.PlaceOrder
+	uc   placeorder2.PlaceOrder
 }
 
 func TestNewPlaceOrder(t *testing.T) {
@@ -40,7 +40,7 @@ func (s *PlaceOrderSuite) SetupTest() {
 	pgDB := database.NewInstance()
 	repositoryFactory := factory.NewDatabaseRepositoryFactory(pgDB)
 	s.db = database.NewInstance().GetDB()
-	s.uc = placeorder.NewPlaceOrder(zipcodeClient, freightCalculator, repositoryFactory)
+	s.uc = placeorder2.NewPlaceOrder(zipcodeClient, freightCalculator, repositoryFactory)
 }
 
 func (s PlaceOrderSuite) TearDownTest() {
@@ -50,9 +50,9 @@ func (s PlaceOrderSuite) TearDownTest() {
 func (s PlaceOrderSuite) TestUseCoupon_Valid_20Percent() {
 	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
-	input := placeorder.InputPlaceOrder{
+	input := placeorder2.InputPlaceOrder{
 		Document: "05272720784",
-		Items: []placeorder.InputPlaceOrderItem{
+		Items: []placeorder2.InputPlaceOrderItem{
 			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
 			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
 			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
@@ -72,9 +72,9 @@ func (s PlaceOrderSuite) TestUseCoupon_Valid_20Percent() {
 func (s PlaceOrderSuite) TestUseCoupon_InvalidCoupon() {
 	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
-	input := placeorder.InputPlaceOrder{
+	input := placeorder2.InputPlaceOrder{
 		Document: "05272720784",
-		Items: []placeorder.InputPlaceOrderItem{
+		Items: []placeorder2.InputPlaceOrderItem{
 			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
 			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
 			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
@@ -94,9 +94,9 @@ func (s PlaceOrderSuite) TestUseCoupon_InvalidCoupon() {
 func (s PlaceOrderSuite) TestUseCoupon_ExpiredCoupon() {
 	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
-	input := placeorder.InputPlaceOrder{
+	input := placeorder2.InputPlaceOrder{
 		Document: "05272720784",
-		Items: []placeorder.InputPlaceOrderItem{
+		Items: []placeorder2.InputPlaceOrderItem{
 			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
 			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
 			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},
@@ -117,10 +117,10 @@ func (s PlaceOrderSuite) TestUseCoupon_CalcOrderCode() {
 	err := test.DatasetTest(s.db, "./../..", "clean.sql", "place_order/data.sql")
 	s.NoError(err)
 	location, _ := time.LoadLocation("America/Sao_Paulo")
-	input := placeorder.InputPlaceOrder{
+	input := placeorder2.InputPlaceOrder{
 		Document:  "05272720784",
 		IssueDate: time.Date(2021, time.Month(8), 20, 0, 0, 0, 0, location),
-		Items: []placeorder.InputPlaceOrderItem{
+		Items: []placeorder2.InputPlaceOrderItem{
 			{ItemID: uuid.MustParse("5549d46f-20d3-4d48-9cbe-80acc2b5cbb9"), Quantity: 2},
 			{ItemID: uuid.MustParse("cf3dfb32-f654-42b6-be0b-d698eae8a146"), Quantity: 1},
 			{ItemID: uuid.MustParse("36ed8660-feaa-4add-94c5-441792e8a0c2"), Quantity: 3},

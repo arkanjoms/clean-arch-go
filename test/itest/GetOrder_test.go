@@ -1,7 +1,7 @@
 package itest
 
 import (
-	"clean-arch-go/application/getorder"
+	"clean-arch-go/domain/application/getorder"
 	"clean-arch-go/infra/database"
 	"clean-arch-go/infra/factory"
 	"clean-arch-go/test"
