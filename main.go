@@ -7,10 +7,17 @@ import (
 	"clean-arch-go/infra/gateway/memory"
 	"clean-arch-go/infra/http"
 	"github.com/sirupsen/logrus"
+    "github.com/subosito/gotenv"
+    "os"
 )
 
 func main() {
-	logrus.SetLevel(logrus.DebugLevel)
+    _ = gotenv.Load()
+    level, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
+    if err != nil {
+        logrus.Fatal("could not parse env LOG_LEVEL: %v", err)
+    }
+    logrus.SetLevel(level)
 	db := database.GetInstance()
 	repositoryFactory := factory.NewDatabaseRepositoryFactory(db)
 	zipcodeClient := memory.NewZipcodeClient()

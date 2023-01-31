@@ -8,7 +8,6 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/sirupsen/logrus"
-	"github.com/subosito/gotenv"
 	"os"
 )
 
@@ -59,7 +58,6 @@ func (d PGDatabase) Exec(ctx context.Context, query string, params ...interface{
 }
 
 func (d PGDatabase) createStringConn() string {
-	_ = gotenv.Load()
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUsername := os.Getenv("DB_USERNAME")
